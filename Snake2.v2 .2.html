@@ -1,0 +1,290 @@
+<DOCTYPE html>
+    <html>
+
+    <head>
+        <meta charset='UTF-8'>
+        <title> Not my first program </title>
+        <script>
+            function getRandom(min, max) {
+                return Math.floor(Math.random() * (max - min + 1) + min);
+            }
+
+            window.onload = function () {
+                let frameMs = 500;
+
+                const NORTH = 0;
+                const EAST = 1;
+                const SOUTH = 2;
+                const WEST = 3;
+
+                const fieldWidth = 20;
+                const fieldHeight = 20;
+
+                const squareSide = 20;
+
+                let score = 0;
+                let highScore = 0;
+
+                let scoreBonus = 5;
+                let difficultyLevel = 0;
+
+                let playerCells = [
+                    { x: fieldWidth / 2, y: fieldHeight / 2 },
+                    { x: fieldWidth / 2, y: fieldHeight / 2 + 1 },
+                    { x: fieldWidth / 2, y: fieldHeight / 2 + 2 }];
+                let playerColor = 'black';
+
+
+                let appleX;
+                let appleY;
+                let appleColor = 'red';
+
+                let paused = false;
+
+                let nextDirection = NORTH;
+                let direction = nextDirection;
+
+                let canvas = document.getElementById('snakeCanvas');
+                let ctx = canvas.getContext('2d');
+
+                canvas.width = fieldWidth * squareSide;
+                canvas.height = fieldHeight * squareSide;
+
+                function spawnApple() {
+                    while (true) {
+                        let spawnIsValid = true;
+                        appleX = getRandom(0, fieldWidth - 1);
+                        appleY = getRandom(0, fieldHeight - 1);
+
+                        for (let cell of playerCells) {
+                            if (cell.x === appleX && cell.y === appleY) {
+                                spawnIsValid = false;
+                                break;
+                            }
+                        }
+                        if (spawnIsValid) {
+                            break;
+                        }
+                    }
+                }
+
+                function setDifficulty(difficulty) {
+                    if (difficulty >= -5 && difficulty <= 5) {
+                        scoreBonus = 5 + difficulty;
+                        frameMs = 500 / Math.pow(1.2, difficulty);
+                        difficultyLevel = difficulty;
+                    }
+                }
+
+
+
+
+
+
+                function spawnAppleBackup(arr) {
+                    appleX = getRandom(0, fieldWidth - 1);
+                    appleY = getRandom(0, fieldHeight - 1);
+
+
+
+
+
+
+
+
+                    // for(let elem of arr){
+                    //     for(let key in elem){
+                    //         if(appleX === elem[key]){
+
+                    //         }else if(appleY === elem[key]){
+                    //             spawnApple(arr);
+                    //         }
+                    //     }
+                    // }
+
+
+                    // for(let elem of playerCells){
+                    //     for(let key in elem){
+                    //         if(elem[key] === Number(appleX) && elem[key] === Number(appleY)){
+                    //             alert('!');
+                    //             spawnApple(playerCells);
+                    //         }
+
+                    //     }
+                    // }
+
+                    return;
+                }
+
+
+                function getAlive() {
+                    for (let i = 1; i < playerCells.length; i++) {
+                        let cell = playerCells[i];
+                        if (playerCells[0].x === cell.x && playerCells[0].y === cell.y) {
+                            alert(`Game over! 
+                            Your score is: ` + score);
+                            if (score > highScore) {
+                                highScore = score;
+                                alert (`There is a new high score: ${highScore}`);
+                            }
+                        }
+                    }
+                }
+
+
+
+                function update() {
+                    if (paused) {
+                        return;
+                    }
+                    let headX = playerCells[0].x
+                    let headY = playerCells[0].y
+                    direction = nextDirection;
+                    switch (direction) {
+                        case NORTH:
+                            headY -= 1;
+                            break;
+                        case EAST:
+                            headX += 1;
+                            break;
+                        case SOUTH:
+                            headY += 1;
+                            break;
+                        case WEST:
+                            headX -= 1;
+                            break;
+                    }
+                    headX = (headX + fieldWidth) % fieldWidth;
+                    headY = (headY + fieldHeight) % fieldHeight;
+                    playerCells.unshift({ x: headX, y: headY });
+
+                    if (headX === appleX && headY === appleY) {
+
+                        score += scoreBonus;
+
+                        spawnApple();
+                    }
+                    else {
+                        playerCells.pop();
+                    }
+                    getAlive();
+
+                }
+
+                function render() {
+                    // show score
+                    console.log('Your score is:' + score);
+
+                    // clear canvas
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // render player
+                    ctx.fillStyle = playerColor;
+                    playerCells.map((cellCoords) => { ctx.fillRect(cellCoords.x * squareSide, cellCoords.y * squareSide, squareSide, squareSide); })
+
+
+                    // render apple
+                    ctx.fillStyle = appleColor;
+                    ctx.fillRect(appleX * squareSide, appleY * squareSide, squareSide, squareSide);
+
+                }
+
+                function processInput(e) {
+                    // direction = getRandom(NORTH, WEST);
+                    console.log(e.code);
+                    switch (e.code) {
+                        case 'ArrowLeft':
+                        case 'KeyA':
+                            if(direction != EAST){
+                                nextDirection = WEST;
+
+                            };                            
+                            break;
+                        case 'ArrowUp':
+                        case 'KeyW':
+                            if(direction != SOUTH){
+                                nextDirection = NORTH;
+                            };
+
+                            
+                            break;
+                        case 'ArrowRight':
+                        case 'KeyD':
+                            if(direction !=WEST){
+                                nextDirection = EAST;
+                            }
+                            break;
+                        case 'ArrowDown':
+                        case 'KeyS':
+                            if(direction !=NORTH){
+                                nextDirection = SOUTH;
+                            }
+                            
+                            break;
+                        case 'Space':
+                            paused = !paused;
+                            playerColor = paused ? 'gray' : 'black';
+                            break;
+                        case 'Equal':
+                        case 'NumpadAdd':
+                            setDifficulty(difficultyLevel + 1);
+
+
+                            console.log('Speed up');
+                            console.log(scoreBonus);
+                            break;
+
+
+                        case 'NumpadSubtract':
+                        case 'Minus':
+                            setDifficulty(difficultyLevel - 1);
+
+
+                            // if (scoreBonus > 1) {
+                            //     scoreBonus--;
+                            // } else {
+                            //     scoreBonus = 1;
+                            // }
+
+                            console.log(scoreBonus);
+
+                            console.log('Speed down');
+                            break;
+
+                    }
+                    console.log(direction);
+                }
+
+                body = document.querySelector('body');
+                body.addEventListener('keydown', processInput);
+
+                function gameLoop() {
+                    update();
+                    render();
+                    setTimeout(gameLoop, frameMs);
+                }
+
+                spawnApple();
+                setTimeout(gameLoop, frameMs);
+            }
+
+
+
+           
+
+
+
+
+
+
+
+        </script>
+    </head>
+
+    <body>
+        Welcome to Snekko<br />
+        <canvas id="snakeCanvas"></canvas>
+    </body>
+
+    </html>
