@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='UTF - 8'>
+	<title> Not my first program </title>
+
+</head>
+
+<body>
+
+	<input id='elem1' type='text' value='0' placeholder='Число А '><br>
+	<input id='elem2' type='text' value='0' placeholder='Число B '><br>
+
+	<input type="radio" name="test" checked value="1">
+	<alt>A+B</alt>
+	<input type="radio" name="test" value="2">
+	<alt>A-B</alt>
+	<input type="radio" name="test" value="3">
+	<alt>A*B</alt>
+	<input type="radio" name="test" value="4">
+	<alt>A/B</alt>
+	<input type="radio" name="test" value="5">
+	<alt>A^B</alt>
+	<input type="radio" name="test" value="6">
+	<alt>√</alt><br>
+
+	<input id="button3" type="button" value='='><br>
+
+	<input id='elem3' type='text' value='' placeholder='Результат/ Result '><br>
+
+
+
+
+
+	<script>
+
+
+
+
+		let button3 = document.querySelector('#button3');
+
+		let data = document.querySelector('#elem1');
+		let data2 = document.querySelector('#elem2');
+		let elem3 = document.querySelector('#elem3');
+
+        let rad = document.getElementsByName('test');
+        for (let i = 0; i < rad.length; i++) {
+            let radioButton = rad[i];
+            radioButton.addEventListener('change', (event) => {
+                if (Number(event.target.value) === 6) {
+                    data2.hidden = !event.target.checked;
+                }
+            })
+        }
+
+
+
+
+		button3.addEventListener('click', function () {
+
+			let a = Number(elem1.value);
+			let b = Number(elem2.value);
+
+			let c = elem2.value;
+
+
+
+			console.log(a, b);
+			let result;
+			let operator = fun1();
+			
+
+			if (operator === 1) {
+				result = a + b;
+			}
+
+			if (operator === 2) {
+				result = a - b;
+			}
+
+			if (operator === 3) {
+				result = a * b;
+			}
+
+			if (operator === 4) {
+				if(b){
+					result = a / b;
+				}else{
+					alert('Вам следует перепроверить делитель');
+					result = 'Вам следует перепроверить делитель';
+				}
+				
+			}
+
+			if (operator === 5) {
+				result = Math.pow(a, b);
+			}
+			if (operator === 6) {
+				elem2.value = '';
+				result = Math.sqrt(a);
+			}
+
+
+
+			elem3.value = result;
+
+
+
+
+
+
+
+
+		});
+
+
+
+		function fun1() {
+
+			let rad = document.getElementsByName('test');
+
+			for (let i = 0; i < rad.length; i++) {
+
+				if (rad[i].checked) {
+
+					
+					return Number(rad[i].value);
+
+				}
+
+			}
+
+		}
+
+
+		
+
+
+
+
+
+	</script>
+</body>
+
+</html>
